@@ -4,7 +4,9 @@
 This repository serves as a starter kit to prototype apps quickly and easily for the GenAI Hackathon.
 
 ## Prerequisites
-* Python 3.9 and above
+* Python 3.8 is acceptable for most of the use cases
+* Python 3.9 and above is required for langchain pandas agent
+
 
 ## Setup
 1. Clone this repository
