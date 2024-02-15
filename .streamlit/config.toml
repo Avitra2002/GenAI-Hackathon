@@ -1,0 +1,7 @@
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "dark"
+primaryColor = "#00FEFE"
+font = "monospace"
