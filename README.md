@@ -40,7 +40,7 @@ This repository serves as a starter kit to prototype apps quickly and easily for
 1. On subsequent run, activate virtual environment 
 1. Run script
     ```
-    python scripts/01_basic_qna.py
+    python scripts/01_minimal.py
     ```
 1. Run app
     ```
