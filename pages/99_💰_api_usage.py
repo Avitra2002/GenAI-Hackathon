@@ -41,6 +41,7 @@ for metadata, log_msg in raw_data:
     usages_records.append(usage_record)
 
 usage_df = pd.DataFrame(usages_records)
+usage_df = usage_df.sort_values("datetime", ascending=False)
 
 if not usage_df.empty:
     st.subheader(f"All time total tokens: {usage_df['total_tokens'].sum():,}")
