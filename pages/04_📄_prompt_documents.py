@@ -11,7 +11,6 @@ from langchain_community.document_loaders import (
 from utils.llm import CompletionStream, get_completion
 from utils.tokens import num_tokens_from_string
 
-
 FILETYPE_TO_DOCLOADER = {
     ".docx": Docx2txtLoader,
     ".txt": TextLoader,

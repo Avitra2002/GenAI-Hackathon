@@ -31,7 +31,10 @@ Starter kit for prototyping GenAI apps quickly.
     ```
     pip install -r requirements.txt
     ```
-1. Setup environment variables. Replace the environment variables in `.env` with the values provided
+1. [Optional] Additional installations required for `openai-whisper` and `pydub` - `ffmpeg` and `rust`. 
+    - See the README at https://github.com/openai/whisper. 
+    - Feel free to skip this if there are no requirements to process audio or video files.
+1. Setup environment variables. Replace the environment variables in `.env` with the values that will be provided
     ```
     cp -i .env.example .env
     ```

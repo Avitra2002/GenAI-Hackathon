@@ -210,4 +210,4 @@ $RECYCLE.BIN/
 # Add additional files and directories to ignore here
 tmp/
 logs/
-
+tmp_audio.mp3
