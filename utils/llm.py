@@ -13,15 +13,13 @@ from utils.tokens import (
     num_tokens_from_string,
 )
 
+LOG_FILEPATH = "./logs/out.log"
 load_dotenv()
 client = AzureOpenAI()
 
-LOG_FILEPATH = "./logs/out.log"
-LOG_FORMAT = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
-logger.add(sys.stderr, format=LOG_FORMAT)
-
 if os.environ.get("DISABLE_LOG_TO_TERMINAL").lower() == "true":
     logger.remove()
+
 logger.add(LOG_FILEPATH)
 
 
