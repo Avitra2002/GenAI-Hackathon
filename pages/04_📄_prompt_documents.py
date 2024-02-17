@@ -76,7 +76,6 @@ with tabs[1]:
     qna_prompt = st.text_area("Q&A prompt", value=QNA_TEMPLATE, height=190)
     if user_input := st.text_input("Question: "):
         updated_input = qna_prompt.format(question=user_input, context=file_raw_text)
-
         st.write("Answer:")
         messages = [
             {"role": "system", "content": system_message},
@@ -109,6 +108,5 @@ with tabs[3]:
             {"role": "system", "content": system_message},
             {"role": "user", "content": updated_input},
         ]
-
         response = get_completion(messages)
         st.json(response.choices[0].message.content)
