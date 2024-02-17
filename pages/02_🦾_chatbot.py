@@ -4,25 +4,22 @@ from utils.llm import CompletionStream, get_completion
 
 st.title("Chatbot")
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+if "chatbot_messages" not in st.session_state:
+    st.session_state.chatbot_messages = []
+messages = st.session_state.chatbot_messages
 
-for msg in st.session_state.messages:
-    st.chat_message(msg["role"]).write(msg["content"])
+for message in messages:
+    st.chat_message(message["role"]).write(message["content"])
 
 if user_input := st.chat_input():
     st.chat_message("user").write(user_input)
-    st.session_state.messages.append({"role": "user", "content": user_input})
+    messages.append({"role": "user", "content": user_input})
 
-    stream = CompletionStream(st.session_state.messages)
+    stream = CompletionStream(messages)
     with stream as response:
         reply = stream.completion = st.chat_message("assistant").write_stream(response)
+    messages.append({"role": "assistant", "content": reply})
 
-    st.session_state.messages.append({"role": "assistant", "content": reply})
-
-    # limit context window to last 10 messages
-    while len(st.session_state.messages) > 10:
-        st.session_state.messages.pop(0)
-
-if st.sidebar.checkbox("Show current context window"):
-    st.sidebar.json(st.session_state.messages, expanded=True)
+    # limit context window for next API call to last 10 messages + user_input
+    while len(messages) > 10:
+        messages.pop(0)
