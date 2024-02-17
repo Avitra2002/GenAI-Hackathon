@@ -46,7 +46,7 @@ def build_messages(system_message: str, updated_input: str):
     ]
 
 
-st.title("Prompt Documents")
+st.title("Interact with Documents")
 
 file_raw_text = ""
 with st.sidebar:
