@@ -12,8 +12,8 @@ from utils.llm import CompletionStream, get_completion
 from utils.tokens import num_tokens_from_string
 
 FAISS_INDEX_DIR = "./data/faiss_index"
-CHUNK_SIZE = 2000
-CHUNK_OVERLAP = 200
+CHUNK_SIZE = 512
+CHUNK_OVERLAP = 128
 QNA_TEMPLATE = """Use the following pieces of context to answer the question at the end
 
 {context}
@@ -38,6 +38,7 @@ with st.sidebar:
     if uploaded_file := st.file_uploader(
         "Upload a file", type=["pdf"], accept_multiple_files=False
     ):
+        # if accept_multiple_files=True, uploaded_files has to be handled differently for loading and saving embeddings
         index_file = Path(f"{FAISS_INDEX_DIR}/{uploaded_file.name}.faiss")
         if index_file.exists():
             vector_store = FAISS.load_local(
@@ -75,12 +76,14 @@ with tab_file_content:
             text_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
             )
-            chunked_documents = text_splitter.split_documents(documents)
-            vector_store = FAISS.from_documents(chunked_documents, embeddings)
+            chunked_docs = text_splitter.split_documents(documents)
+            vector_store = FAISS.from_documents(chunked_docs, embeddings)
             vector_store.save_local(
                 folder_path=FAISS_INDEX_DIR, index_name=uploaded_file.name
             )
-            st.success(f"Embeddings generated and saved in `{FAISS_INDEX_DIR}`")
+            st.success(
+                f"{len(chunked_docs):,} chunked documents and their embeddings saved in `{FAISS_INDEX_DIR}`"
+            )
 
 with tab_qna:
     if not vector_store:
@@ -108,10 +111,10 @@ with tab_qna:
                 with stream as response:
                     stream.completion = st.write_stream(response)
 
-                st.write("### Document chunks close to question")
+                st.write("### Document chunks retrieved")
                 for doc, score in docs_and_scores:
                     with st.expander(
-                        label=f'Page: {doc.metadata["page"]+1}, Score: {score:.3f}',
+                        label=f'{doc.metadata["title"]} (Page {doc.metadata["page"]+1}) - Score: {score:.3f}',
                         expanded=False,
                     ):
                         st.text(doc.page_content)
