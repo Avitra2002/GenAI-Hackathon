@@ -7,8 +7,6 @@ import streamlit as st
 
 from utils.llm import LOG_FILEPATH
 
-st.set_page_config(page_title="API Usage", page_icon="📈", layout="wide")
-
 st.title("Azure OpenAI API Usage")
 
 if not Path(LOG_FILEPATH).is_file():
