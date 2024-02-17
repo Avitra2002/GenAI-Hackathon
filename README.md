@@ -1,11 +1,12 @@
 # GenAI Hackathon Starter Kit
 
-## Intro
-This repository serves as a starter kit to prototype apps quickly and easily for the GenAI Hackathon.
+## Objective
+Starter kit for prototyping GenAI apps quickly.
 
 ## Prerequisites
-* Python 3.8 is acceptable for most of the use cases
-* Python 3.9 and above is required for langchain pandas agent
+1. Python 3.9 is recommended
+1. Some basic knowledge of [Streamlit](https://streamlit.io/) or learn from simple [tutorials](https://docs.streamlit.io/get-started/tutorials)
+1. Minimal knowledge about OpenAI API and Prompt Engineering.
 
 
 ## Setup
@@ -30,22 +31,19 @@ This repository serves as a starter kit to prototype apps quickly and easily for
     ```
     pip install -r requirements.txt
     ```
-
-1. Create a file called `.env` in the root folder, and add the following content, with actual values you will be given:
+1. Setup environment variables. Replace the environment variables in `.env` with the values provided
     ```
-    AZURE_OPENAI_ENDPOINT=https://xxxxxxx.openai.azure.com/
-    AZURE_OPENAI_API_KEY=xxxxxxx
-    OPENAI_API_VERSION=xxxx
+    cp -i .env.example .env
     ```
 
 ## Running the app
 1. On subsequent run, activate virtual environment 
 1. Run script
     ```
-    python scripts/01_minimal.py
+    python -m scripts.01_minimal
     ```
 1. Run app
     ```
     streamlit run home.py 
     ```
-
+    

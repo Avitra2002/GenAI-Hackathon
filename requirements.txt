@@ -1,4 +1,9 @@
+black==24.2.0
+isort==5.13.2
+loguru==0.7.2
 openai==1.11.1
+pandas==2.2.0
 python-dotenv==1.0.1
 streamlit==1.31.1
+tiktoken==0.5.2
 watchdog==4.0.0

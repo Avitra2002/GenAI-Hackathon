@@ -208,4 +208,6 @@ $RECYCLE.BIN/
 
 ### Custom ###
 # Add additional files and directories to ignore here
+tmp/
+logs/
 

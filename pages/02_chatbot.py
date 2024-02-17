@@ -1,25 +1,21 @@
 import streamlit as st
-from dotenv import load_dotenv
-from openai import AzureOpenAI
 
-load_dotenv()
-client = AzureOpenAI()
+from utils.llm import CompletionStream, get_completion
 
 st.title("Chatbot")
 
-if "chatbot_messages" not in st.session_state:
-    st.session_state.chatbot_messages = []
-msg_history = st.session_state.chatbot_messages
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-for msg in msg_history:
+for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
-if user_input := st.chat_input("Question: "):
+if user_input := st.chat_input():
     st.chat_message("user").write(user_input)
-    msg_history.append({"role": "user", "content": user_input})
+    st.session_state.messages.append({"role": "user", "content": user_input})
 
-    response = client.chat.completions.create(
-        model="gpt-35-turbo-16k", messages=msg_history, stream=True
-    )
-    reply = st.chat_message("assistant").write_stream(response)
-    msg_history.append({"role": "assistant", "content": reply})
+    stream = CompletionStream(st.session_state.messages)
+    with stream as response:
+        reply = stream.completion = st.chat_message("assistant").write_stream(response)
+
+    st.session_state.messages.append({"role": "assistant", "content": reply})

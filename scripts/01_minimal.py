@@ -1,10 +1,7 @@
-from dotenv import load_dotenv
-from openai import AzureOpenAI
+from utils.llm import get_completion
 
-load_dotenv()
-client = AzureOpenAI()
+if user_input := input("Question: "):
+    messages = [{"role": "user", "content": user_input}]
 
-messages = [{"role": "user", "content": "Hi"}]
-print(f'User: {messages[0]["content"]}')
-response = client.chat.completions.create(model="gpt-35-turbo-16k", messages=messages)
-print(f"LLM: {response.choices[0].message.content}")
+    response = get_completion(messages)
+    print(f"Answer: {response.choices[0].message.content}")
