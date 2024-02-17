@@ -74,9 +74,9 @@ if user_input := st.chat_input():
         presence_penalty=presence_penalty,
     )
     with stream as response:
-        reply = stream.completion = st.chat_message("assistant").write_stream(response)
+        stream.completion = st.chat_message("assistant").write_stream(response)
 
-    messages.append({"role": "assistant", "content": reply})
+    messages.append({"role": "assistant", "content": stream.completion})
 
     # limit context window
     while len(messages) > n_past_messages:
