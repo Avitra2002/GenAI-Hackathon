@@ -96,4 +96,8 @@ class CompletionStream:
         return response
 
     def __exit__(self, exc_type, exc_value, traceback):
+        if self.completion is None:
+            raise ValueError(
+                "Ensure CompletionStream's `completion` attribute is set at the end of streaming"
+            )
         log_usage(prompt=self.messages, completion=self.completion)
