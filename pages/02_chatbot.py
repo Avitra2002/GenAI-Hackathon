@@ -19,3 +19,10 @@ if user_input := st.chat_input():
         reply = stream.completion = st.chat_message("assistant").write_stream(response)
 
     st.session_state.messages.append({"role": "assistant", "content": reply})
+
+    # limit context window to last 10 messages
+    while len(st.session_state.messages) > 10:
+        st.session_state.messages.pop(0)
+
+if st.sidebar.checkbox("Show current context window"):
+    st.sidebar.json(st.session_state.messages, expanded=True)
