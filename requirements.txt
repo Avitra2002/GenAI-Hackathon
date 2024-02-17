@@ -1,5 +1,6 @@
 black==24.2.0
 docx2txt==0.8
+faiss-cpu==1.7.4
 isort==5.13.2
 langchain-community==0.0.19
 langchain-experimental==0.0.51
@@ -12,6 +13,7 @@ pandas==2.2.0
 pydub==0.25.1
 PyMuPDF==1.23.21
 python-dotenv==1.0.1
+sentence_transformers
 streamlit==1.31.1
 tiktoken==0.5.2
 watchdog==4.0.0
