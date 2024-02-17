@@ -9,6 +9,8 @@ from utils.llm import LOG_FILEPATH
 
 st.set_page_config(page_title="API Usage", page_icon="📈", layout="wide")
 
+st.title("Azure OpenAI API Usage")
+
 if not Path(LOG_FILEPATH).is_file():
     st.error(f"API usage log file ({LOG_FILEPATH}) not found!")
     st.stop()
@@ -41,10 +43,10 @@ for metadata, log_msg in raw_data:
 usage_df = pd.DataFrame(usages_records)
 
 if not usage_df.empty:
-    st.subheader(f"Overall total tokens: {usage_df['total_tokens'].sum()}")
+    st.subheader(f"All time total tokens: {usage_df['total_tokens'].sum():,}")
     st.bar_chart(usage_df, x="datetime", y="total_tokens")
 
-    st.subheader(f"Overall total cost USD: ${usage_df['total_costs_usd'].sum():.6f}")
+    st.subheader(f"All time total cost (USD): ${usage_df['total_costs_usd'].sum():.6f}")
     st.bar_chart(usage_df, x="datetime", y="total_costs_usd")
 
     st.dataframe(
