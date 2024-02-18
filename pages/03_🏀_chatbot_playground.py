@@ -8,10 +8,7 @@ from utils.llm import (
     DEFAULT_TEMPERATURE,
     DEFAULT_TOP_P,
     CompletionStream,
-    get_completion,
 )
-
-st.title("Chatbot Playground")
 
 
 def clear_messages():
@@ -19,15 +16,17 @@ def clear_messages():
         del st.session_state["chatbot_playground_messages"]
 
 
+st.title("Chatbot Playground")
+
 with st.sidebar:
-    system_message = st.text_area(
+    sys_message = st.text_area(
         "System message", value="You are a helpful assistant.", on_change=clear_messages
     )
     n_past_messages = st.slider(
         "Include past messages",
         value=DEFAULT_N_PAST_MESSAGES,
-        min_value=1,
-        max_value=21,
+        min_value=0,
+        max_value=20,
         step=2,
     )
     with st.expander("Parameters"):
@@ -51,15 +50,15 @@ with st.sidebar:
             max_value=2.0,
         )
 
-
 if "chatbot_playground_messages" not in st.session_state:
     st.session_state.chatbot_playground_messages = [
-        {"role": "system", "content": system_message}
+        {"role": "system", "content": sys_message}
     ]
-messages = st.session_state.chatbot_playground_messages
+messages = st.session_state.chatbot_playground_messages  # alias as shorthand
 
 for message in messages:
-    st.chat_message(message["role"]).write(message["content"])
+    if message["role"] != "system":
+        st.chat_message(message["role"]).write(message["content"])
 
 if user_input := st.chat_input():
     st.chat_message("user").write(user_input)
@@ -74,10 +73,8 @@ if user_input := st.chat_input():
         presence_penalty=presence_penalty,
     )
     with stream as response:
-        stream.completion = st.chat_message("assistant").write_stream(response)
-
+        stream.completion = str(st.chat_message("assistant").write_stream(response))
     messages.append({"role": "assistant", "content": stream.completion})
 
-    # limit context window
-    while len(messages) > n_past_messages:
+    while len(messages) > n_past_messages + 1:  # limit context window
         messages.pop(1)  # preserve system message at index 0

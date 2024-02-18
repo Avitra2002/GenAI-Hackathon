@@ -1,6 +1,6 @@
 import streamlit as st
 
-from utils.llm import CompletionStream, get_completion
+from utils.llm import CompletionStream
 
 st.title("Chatbot")
 
@@ -17,9 +17,8 @@ if user_input := st.chat_input():
 
     stream = CompletionStream(messages)
     with stream as response:
-        stream.completion = st.chat_message("assistant").write_stream(response)
+        stream.completion = str(st.chat_message("assistant").write_stream(response))
     messages.append({"role": "assistant", "content": stream.completion})
 
-    # limit context window
-    while len(messages) > 10:
+    while len(messages) > 10:  # limit context window by removing the earliest
         messages.pop(0)

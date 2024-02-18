@@ -1,11 +1,10 @@
-import os
 import tempfile
 
 import streamlit as st
 import whisper
 from pydub import AudioSegment
 
-from utils.llm import CompletionStream, get_completion
+from utils.llm import CompletionStream
 from utils.tokens import num_tokens_from_string
 
 model = whisper.load_model("base")
@@ -28,17 +27,15 @@ def video_to_audio(video_file, format="mp3") -> str:
 @st.cache_data
 def audio_to_text(audio_file) -> str:
     result = model.transcribe(audio_file, fp16=False)
-    return result["text"]
+    return str(result["text"])
 
 
 st.title("Video & Audio Summary")
 with st.sidebar:
-    system_message = st.text_area(
-        "System message", value="You are a helpful assistant."
-    )
+    sys_message = st.text_area("System message", value="You are a helpful assistant.")
     uploaded_file = st.sidebar.file_uploader(
         "Upload a video file and convert it to a transcript.",
-        type=["mp3", "mp4", "wav"],
+        type=["mp3", "m4a", "wav", "mp4"],
     )
 
 tab_audio_video, tab_summary = st.tabs(["Audio & Video", "Summary"])
@@ -79,11 +76,11 @@ with tab_summary:
         if st.button("Summarize"):
             updated_input = summary_prompt.format(context=transcript)
             messages = [
-                {"role": "system", "content": system_message},
+                {"role": "system", "content": sys_message},
                 {"role": "user", "content": updated_input},
             ]
             stream = CompletionStream(messages)
             with stream as response:
-                stream.completion = st.write_stream(response)
+                stream.completion = str(st.write_stream(response))
     else:
         st.write("Please upload an audio or video file first!")

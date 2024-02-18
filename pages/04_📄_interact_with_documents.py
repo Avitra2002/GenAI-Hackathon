@@ -50,9 +50,7 @@ st.title("Interact with Documents")
 
 file_raw_text = ""
 with st.sidebar:
-    system_message = st.text_area(
-        "System message", value="You are a helpful assistant."
-    )
+    sys_message = st.text_area("System message", value="You are a helpful assistant.")
     if uploaded_file := st.file_uploader(
         "Upload a file",
         type=["docx", "txt", "md", "pdf"],
@@ -83,19 +81,19 @@ with tabs[1]:
     if user_input := st.text_input("Question: "):
         updated_input = qna_prompt.format(question=user_input, context=file_raw_text)
         st.write("Answer:")
-        messages = build_messages(system_message, updated_input)
+        messages = build_messages(sys_message, updated_input)
         stream = CompletionStream(messages)
         with stream as response:
-            stream.completion = st.write_stream(response)
+            stream.completion = str(st.write_stream(response))
 
 with tabs[2]:
     summary_prompt = st.text_area("Summary prompt", value=SUMMARY_TEMPLATE, height=150)
     if st.button("Summarize"):
         updated_input = summary_prompt.format(context=file_raw_text)
-        messages = build_messages(system_message, updated_input)
+        messages = build_messages(sys_message, updated_input)
         stream = CompletionStream(messages)
         with stream as response:
-            stream.completion = st.write_stream(response)
+            stream.completion = str(st.write_stream(response))
 
 with tabs[3]:
     parsing_prompt = st.text_area(
@@ -103,6 +101,6 @@ with tabs[3]:
     )
     if st.button("Format"):
         updated_input = parsing_prompt.format(context=file_raw_text)
-        messages = build_messages(system_message, updated_input)
+        messages = build_messages(sys_message, updated_input)
         response = get_completion(messages)
         st.json(response.choices[0].message.content)

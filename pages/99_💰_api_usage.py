@@ -1,9 +1,9 @@
 import re
 from pathlib import Path
 
-import dateutil
 import pandas as pd
 import streamlit as st
+from dateutil import parser
 
 from utils.llm import LOG_FILEPATH
 
@@ -28,7 +28,7 @@ usages_records = []
 for metadata, log_msg in raw_data:
     usage_data = log_msg.split(",")
     usage_record = {
-        "datetime": dateutil.parser.parse(metadata.split("|")[0]),
+        "datetime": parser.parse(metadata.split("|")[0]),
         "prompt_tokens": int(usage_data[0].split(":")[1]),
         "prompt_costs_usd": float(usage_data[1].split(":")[1].strip("$ ")),
         "completion_tokens": int(usage_data[2].split(":")[1]),
@@ -42,12 +42,6 @@ usage_df = pd.DataFrame(usages_records)
 usage_df = usage_df.sort_values("datetime", ascending=False)
 
 if not usage_df.empty:
-    st.subheader(f"All time total tokens: {usage_df['total_tokens'].sum():,}")
-    st.bar_chart(usage_df, x="datetime", y="total_tokens")
-
-    st.subheader(f"All time total cost (USD): ${usage_df['total_costs_usd'].sum():.6f}")
-    st.bar_chart(usage_df, x="datetime", y="total_costs_usd")
-
     st.dataframe(
         usage_df.style.format(
             {
@@ -58,3 +52,9 @@ if not usage_df.empty:
             }
         )
     )
+
+    st.subheader(f"All time total tokens: {usage_df['total_tokens'].sum():,}")
+    st.bar_chart(usage_df, x="datetime", y="total_tokens")
+
+    st.subheader(f"All time total cost (USD): ${usage_df['total_costs_usd'].sum():.6f}")
+    st.bar_chart(usage_df, x="datetime", y="total_costs_usd")

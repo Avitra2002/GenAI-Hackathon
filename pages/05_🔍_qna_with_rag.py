@@ -1,5 +1,4 @@
 import tempfile
-from io import StringIO
 from pathlib import Path
 
 import streamlit as st
@@ -22,19 +21,15 @@ QUESTION: {question}
 
 ANSWER:"""
 
-# https://huggingface.co/blog/getting-started-with-embeddings
 # Equivalent to SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 vector_store = None
 file_raw_text = ""
 
-
 st.title("Q&A on Documents with Retrieval-Augmented Generation (RAG)")
 
 with st.sidebar:
-    system_message = st.text_area(
-        "System message", value="You are a helpful assistant."
-    )
+    sys_message = st.text_area("System message", value="You are a helpful assistant.")
     if uploaded_file := st.file_uploader(
         "Upload a file", type=["pdf"], accept_multiple_files=False
     ):
@@ -104,12 +99,12 @@ with tab_qna:
 
                 updated_input = qna_prompt.format(context=context, question=user_input)
                 messages = [
-                    {"role": "system", "content": system_message},
+                    {"role": "system", "content": sys_message},
                     {"role": "user", "content": updated_input},
                 ]
                 stream = CompletionStream(messages)
                 with stream as response:
-                    stream.completion = st.write_stream(response)
+                    stream.completion = str(st.write_stream(response))
 
                 st.write("### Document chunks retrieved")
                 for doc, score in docs_and_scores:

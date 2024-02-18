@@ -1,31 +1,25 @@
 import os
-import sys
 from typing import Dict, List, Optional
 
 from dotenv import load_dotenv
 from loguru import logger
 from openai import AzureOpenAI
 
-from utils.tokens import (
-    DEFAULT_MODEL,
-    log_usage,
-    num_tokens_from_messages,
-    num_tokens_from_string,
-)
+from utils.tokens import DEFAULT_MODEL, log_usage
 
 DEFAULT_MAX_TOKENS = 800
 DEFAULT_TEMPERATURE = 0.0
 DEFAULT_TOP_P = 0.95
 DEFAULT_FREQUENCY_PENALTY = 0.0
 DEFAULT_PRESENCE_PENALTY = 0.0
-DEFAULT_N_PAST_MESSAGES = 11
+DEFAULT_N_PAST_MESSAGES = 10
 DEFAULT_SEED = None
 
 LOG_FILEPATH = "./logs/out.log"
 load_dotenv()
 client = AzureOpenAI()
 
-if os.environ.get("DISABLE_LOG_TO_TERMINAL").lower() == "true":
+if os.environ.get("DISABLE_LOG_TO_TERMINAL", "").lower() == "true":
     logger.remove()
 
 logger.add(LOG_FILEPATH)
@@ -48,7 +42,7 @@ def get_completion(
 ):
     response = client.chat.completions.create(
         model=DEFAULT_MODEL,
-        messages=messages,
+        messages=messages,  # type: ignore
         max_tokens=max_tokens,
         temperature=temperature,
         top_p=top_p,
@@ -57,7 +51,9 @@ def get_completion(
         seed=seed,
         stream=False,
     )
-    log_usage(prompt=messages, completion=response.choices[0].message.content)
+    reply_content = response.choices[0].message.content
+    if reply_content:
+        log_usage(prompt=messages, completion=reply_content)
     return response
 
 
@@ -73,7 +69,7 @@ class CompletionStream:
         seed: Optional[int] = DEFAULT_SEED,
     ):
         self.messages = messages
-        self.completion = None
+        self.completion: Optional[str] = None
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.top_p = top_p
@@ -84,7 +80,7 @@ class CompletionStream:
     def __enter__(self):
         response = client.chat.completions.create(
             model=DEFAULT_MODEL,
-            messages=self.messages,
+            messages=self.messages,  # type: ignore
             max_tokens=self.max_tokens,
             temperature=self.temperature,
             top_p=self.top_p,
