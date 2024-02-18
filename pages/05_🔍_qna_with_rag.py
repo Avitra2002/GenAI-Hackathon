@@ -7,7 +7,7 @@ from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores.faiss import FAISS
 
-from utils.llm import CompletionStream, get_completion
+from utils.llm import get_completion
 from utils.tokens import num_tokens_from_string
 
 FAISS_INDEX_DIR = "./data/faiss_index"
@@ -66,8 +66,8 @@ with tab_file_content:
     n_token = num_tokens_from_string(file_raw_text)
     st.write(f"Contains `{n_token:,}` tokens")
 
-    if st.button("Generate and save embeddings"):
-        with st.spinner("Generating and saving..."):
+    if st.button("Chunk document, generate embeddings and save to vector store"):
+        with st.spinner("Chunking, generating and saving..."):
             text_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
             )
@@ -77,16 +77,16 @@ with tab_file_content:
                 folder_path=FAISS_INDEX_DIR, index_name=uploaded_file.name
             )
             st.success(
-                f"{len(chunked_docs):,} chunked documents and their embeddings saved in `{FAISS_INDEX_DIR}`"
+                f"Generated {len(chunked_docs):,} chunks and saved embeddings to local vector store in {FAISS_INDEX_DIR}"
             )
 
 with tab_qna:
     if not vector_store:
-        st.write("Generate embeddings first under the `File Content` tab!")
+        st.write("Process uploaded pdf file first under the `File Content` tab!")
     else:
         qna_prompt = st.text_area("Q&A prompt", value=QNA_TEMPLATE, height=190)
 
-        if user_input := st.text_input("Question"):
+        if user_input := st.text_area("Question"):
             context = ""
             docs_and_scores = vector_store.similarity_search_with_score(
                 user_input, k=top_k
@@ -102,14 +102,15 @@ with tab_qna:
                     {"role": "system", "content": sys_message},
                     {"role": "user", "content": updated_input},
                 ]
-                stream = CompletionStream(messages)
-                with stream as response:
-                    stream.completion = str(st.write_stream(response))
+
+                response = get_completion(messages)
+                reply = response.choices[0].message.content
+                st.write(reply.replace("$", r"\$"))  # fix dollar sign issue
 
                 st.write("### Document chunks retrieved")
                 for doc, score in docs_and_scores:
                     with st.expander(
-                        label=f'{doc.metadata["title"]} (Page {doc.metadata["page"]+1}) - Score: {score:.3f}',
+                        label=f'Page: {doc.metadata["page"]+1}, Score: {score:.3f}',
                         expanded=False,
                     ):
                         st.text(doc.page_content)
