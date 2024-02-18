@@ -32,21 +32,23 @@ Starter kit for prototyping GenAI apps quickly.
     pip install -r requirements.txt
     ```
 1. [Optional] Additional installations required for `openai-whisper` and `pydub` - `ffmpeg` and `rust`. 
-    - See the README at https://github.com/openai/whisper. 
-    - Feel free to skip this if there are no requirements to process audio or video files.
+    - See the README at https://github.com/openai/whisper
+    - Feel free to skip this if there are no requirements to process audio or video files
 1. Setup environment variables. Replace the environment variables in `.env` with the values that will be provided
     ```
     cp -i .env.example .env
     ```
 
-## Running the app
-1. On subsequent run, activate virtual environment 
+## Run
+1. On subsequent runs, do remember to activate virtual environment 
 1. Run script
     ```
     python -m scripts.01_minimal
     ```
+1. [Optional] Run notebook.ipynb either directly in VSCode editor or via `jupyter notebook`
 1. Run app
     ```
     streamlit run hackathon.py
     ```
+
     

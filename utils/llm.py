@@ -54,7 +54,9 @@ def get_completion(
     reply_content = response.choices[0].message.content
     if reply_content:
         log_usage(prompt=messages, completion=reply_content)
-    return response
+        return response
+
+    raise ValueError("No reply content from API response!")
 
 
 class CompletionStream:
