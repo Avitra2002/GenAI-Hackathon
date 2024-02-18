@@ -47,6 +47,6 @@ Starter kit for prototyping GenAI apps quickly.
     ```
 1. Run app
     ```
-    streamlit run home.py 
+    streamlit run hackathon.py
     ```
     
