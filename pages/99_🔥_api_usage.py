@@ -7,6 +7,8 @@ from dateutil import parser
 
 from utils.llm import LOG_FILEPATH
 
+import streamlit as st
+
 st.title("Azure OpenAI API Usage")
 
 if not Path(LOG_FILEPATH).is_file():
@@ -39,9 +41,9 @@ for metadata, log_msg in raw_data:
     usages_records.append(usage_record)
 
 usage_df = pd.DataFrame(usages_records)
-usage_df = usage_df.sort_values("datetime", ascending=False)
 
 if not usage_df.empty:
+    usage_df = usage_df.sort_values("datetime", ascending=False)
     st.dataframe(
         usage_df.style.format(
             {

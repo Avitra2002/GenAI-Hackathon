@@ -212,3 +212,4 @@ tmp/
 logs/
 tmp_audio.mp3
 faiss_index/
+.idea
