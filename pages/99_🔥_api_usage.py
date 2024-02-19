@@ -7,8 +7,6 @@ from dateutil import parser
 
 from utils.llm import LOG_FILEPATH
 
-import streamlit as st
-
 st.title("Azure OpenAI API Usage")
 
 if not Path(LOG_FILEPATH).is_file():
