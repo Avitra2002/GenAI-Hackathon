@@ -7,7 +7,7 @@ from openai import AzureOpenAI
 
 from utils.tokens import DEFAULT_MODEL, log_usage
 
-DEFAULT_MAX_TOKENS = 800
+DEFAULT_MAX_TOKENS = 1200
 DEFAULT_TEMPERATURE = 0.0
 DEFAULT_TOP_P = 0.95
 DEFAULT_FREQUENCY_PENALTY = 0.0
