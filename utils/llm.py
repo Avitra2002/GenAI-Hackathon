@@ -80,6 +80,7 @@ class CompletionStream:
         self.seed = seed
 
     def __enter__(self):
+        self.completion = None
         response = client.chat.completions.create(
             model=DEFAULT_MODEL,
             messages=self.messages,  # type: ignore
