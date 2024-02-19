@@ -5,14 +5,14 @@ Starter kit for prototyping GenAI apps quickly.
 
 ## Prerequisites
 1. Python 3.9 is recommended
-1. Some basic knowledge of [Streamlit](https://streamlit.io/) or learn from simple [tutorials](https://docs.streamlit.io/get-started/tutorials)
-1. Minimal knowledge about OpenAI API and Prompt Engineering.
+1. Basic knowledge of [Streamlit](https://streamlit.io/) or learn from simple [tutorials](https://docs.streamlit.io/get-started/tutorials)
+1. Basic knowledge about OpenAI API and Prompt Engineering ([recommended course](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/))
 
 
 ## Setup
 1. Clone this repository
     ```
-    git clone git@bitbucket.org:temasek/starter-kit.git
+    git clone git@bitbucket.org:temasek/genai-starter-kit.git
     ```
 1. Create a virtual environment 
     ```
