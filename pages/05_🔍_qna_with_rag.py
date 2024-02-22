@@ -21,12 +21,19 @@ QUESTION: {question}
 
 ANSWER:"""
 
-# Equivalent to SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+
+@st.cache_resource
+def load_embeddings():
+    # equivalent to SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+    return HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+
+
+embeddings = load_embeddings()
 vector_store = None
 file_raw_text = ""
 
 st.title("Q&A on Documents with Retrieval-Augmented Generation (RAG)")
+
 
 with st.sidebar:
     sys_message = st.text_area("System message", value="You are a helpful assistant.")
@@ -36,6 +43,7 @@ with st.sidebar:
         # if accept_multiple_files=True, uploaded_files has to be handled differently for loading and saving embeddings
         index_file = Path(f"{FAISS_INDEX_DIR}/{uploaded_file.name}.faiss")
         if index_file.exists():
+
             vector_store = FAISS.load_local(
                 folder_path=FAISS_INDEX_DIR,
                 embeddings=embeddings,
@@ -59,7 +67,7 @@ with tab_file_content:
             f.write(uploaded_file.read())
             documents = PyMuPDFLoader(f.name).load()
             file_raw_text = "".join(page.page_content for page in documents)
-            # consider adding table extraction if applicable besides text extraction
+            # if applicable, consider adding table extraction besides text extraction for improvements
             # https://artifex.com/blog/table-recognition-extraction-from-pdfs-pymupdf-python
 
     st.text_area("Context", value=file_raw_text, height=300)

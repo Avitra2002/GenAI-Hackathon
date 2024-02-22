@@ -7,13 +7,17 @@ from pydub import AudioSegment
 from utils.llm import CompletionStream
 from utils.tokens import num_tokens_from_string
 
-model = whisper.load_model("base")
 transcript = ""
 SUMMARY_TEMPLATE = """Write a summary based on the following
 
 {context}
 
 SUMMARY:"""
+
+
+@st.cache_resource
+def load_model():
+    return whisper.load_model("base")
 
 
 @st.cache_data
@@ -26,6 +30,7 @@ def video_to_audio(video_file, format="mp3") -> str:
 
 @st.cache_data
 def audio_to_text(audio_file) -> str:
+    model = load_model()
     result = model.transcribe(audio_file, fp16=False)
     return str(result["text"])
 
