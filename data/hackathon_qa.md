@@ -20,7 +20,7 @@ Answer: Azure OpenAI is the enterprise version of the OpenAI APIs, which has the
 
 Question: Can we request for other models like `gpt-4`, `gpt-4 (vision-preview)`, `dalle2` or `dalle3`? Can we request for embeddings API like the `text-embedding-ada-002`?
 
-Answer: For the most part, the provided LLM API should suffice, we recommend teams to use that.For embeddings, you can use local models (ie those from HuggingFace) to generate them. See https://bitbucket.org/genai_hackathon/genai-starter-kit/src/master/pages/05_%F0%9F%94%8D_qna_with_rag.py for an example. If you really need other models, the request will be granted on an ad-hoc basis, and it will be on the hackathon team to ensure that the spent amount does not burst the daily budget.
+Answer: For the most part, the provided LLM API should suffice, we recommend teams to use that.For embeddings, you can use local models (ie those from HuggingFace) to generate them. See https://bitbucket.org/hackathon-genai/genai-starter-kit/src/master/pages/05_%F0%9F%94%8D_qna_with_rag.py for an example. If you really need other models, the request will be granted on an ad-hoc basis, and it will be on the hackathon team to ensure that the spent amount does not burst the daily budget.
 
 ---
 
@@ -49,7 +49,7 @@ Alternatively, participants can opt not to use the wrapper function and use the 
 
 Question: How do I get started to build a GenAI prototype for the hackathon? Where can I find the genai-starter-kit?
 
-Answer: Git clone from https://bitbucket.org/genai_hackathon/genai-starter-kit and run the sample app. Then you can either modify from that repo or git fork a new one.
+Answer: Git clone from https://bitbucket.org/hackathon-genai/genai-starter-kit and run the sample app. Then you can either modify from that repo or git fork a new one.
 
 ---
 
