@@ -1,6 +1,7 @@
 black==24.2.0
 docx2txt==0.8
 faiss-cpu==1.7.4
+httpx==0.24.1
 isort==5.13.2
 jupyter==1.0.0
 langchain-community==0.0.19
