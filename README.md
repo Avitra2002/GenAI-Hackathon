@@ -12,7 +12,7 @@ Starter kit for prototyping GenAI apps quickly.
 ## Setup
 1. Clone this repository
     ```
-    git clone git@bitbucket.org:temasek/genai-starter-kit.git
+    git clone git@bitbucket.org:genai_hackathon/genai-starter-kit.git
     ```
 1. Create a virtual environment 
     ```
