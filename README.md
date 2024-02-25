@@ -45,6 +45,7 @@ Starter kit for prototyping GenAI apps quickly.
     ```
     python -m scripts.01_minimal
     ```
+- Note that `python scripts/01_minimal.py` would not work due to sibling package imports
 1. [Optional] Run notebook.ipynb either directly in VSCode editor or via `jupyter notebook`
 1. Run app
     ```
