@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List, Optional
+from typing import Any, Dict, Iterable, List, Optional
 
 from dotenv import load_dotenv
 from loguru import logger
@@ -100,3 +100,15 @@ class CompletionStream:
                 "Ensure CompletionStream's `completion` attribute is set at the end of streaming"
             )
         log_usage(prompt=self.messages, completion=self.completion)
+
+
+def print_stream(response: Iterable[Any]):
+    """Print chat completion streaming response in chunks"""
+    collected_messages = []
+    for chunk in response:
+        chunk_message = chunk.choices[0].delta.content
+        if chunk_message is not None:
+            collected_messages.append(chunk_message)
+            print(chunk_message, end="", sep="", flush=True)
+
+    return "".join(collected_messages)
