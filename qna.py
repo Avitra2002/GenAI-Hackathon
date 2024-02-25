@@ -22,7 +22,7 @@ def load_faq():
 
 
 def load_qna():
-    if st.sidebar.checkbox(" "):
+    if st.sidebar.toggle(" "):
         if user_input := st.text_input("Question:"):
             file_raw_text = load_faq()
             system_prompt = QNA_PROMPT.format(
