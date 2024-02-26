@@ -79,13 +79,13 @@ Answer: Yes, in fact the genai-starter-kit uses the latest version of LangChain,
 
 Question: Can I use LlamaIndex
 
-Answer: Yes, but since LlamaIndex also provides its own wrapper functions and classes, you’ll be on your own. The same Azure OpenAI credentials and environment variables should still work.
+Answer: Yes, you can switch to [feat/llama-index](https://bitbucket.org/hackathon-genai/genai-starter-kit/src/ecf2722f5a0ef64523136427665b7ef91f0a6765/?at=feat%2Fllama-index) branch of the geni-starter-kit .The same Azure OpenAI credentials and environment variables should still work.
 
 ---
 
-Question: What kind of vector stores can I use to implement RAG? Can I use Pinecone, ChromaDB, Qdrant, Weavite, Milvue or FAISS?
+Question: What kind of vector stores can I use to implement RAG? Can I use Pinecone, ChromaDB, Qdrant, Weavite, Milvus, FAISS or Redis Vector Store?
 
-Answer: The rule of thumb is you should be running the entire prototype locally, and only make external API calls to Azure OpenAI. Since Pinecone is a cloud-based vector database, it shouldn't be used. Qdrant, ChromeDB and Weaviate, Milvus and other similar databases can be used only if you run them locally. A very basic example of FAISS as local vector store is provided in the starter-kit.
+Answer: The rule of thumb is you should be running the entire prototype locally, and only make external API calls to Azure OpenAI. Since Pinecone is a cloud-based vector database, it shouldn't be used. Qdrant, ChromeDB and Weaviate, Milvus and other similar databases can be used only if you run them locally. A very basic example of FAISS (and Redis Vector Store for LlamaIndex in the llama-index feature branch) as local vector store is provided in the starter-kit.
 
 ---
 
