@@ -1,3 +1,4 @@
+# similar to https://platform.openai.com/playground?mode=chat&model=gpt-3.5-turbo-16k
 import streamlit as st
 
 from utils.llm import (
