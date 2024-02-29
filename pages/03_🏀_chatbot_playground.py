@@ -31,23 +31,23 @@ with st.sidebar:
         step=2,
     )
     with st.expander("Parameters"):
-        max_tokens = st.slider(
-            "Max response", value=DEFAULT_MAX_TOKENS, min_value=1, max_value=1600
-        )
         temperature = st.slider(
             "Temperature", value=DEFAULT_TEMPERATURE, min_value=0.0, max_value=2.0
+        )
+        max_tokens = st.slider(
+            "Max response", value=DEFAULT_MAX_TOKENS, min_value=1, max_value=16384
         )
         top_p = st.slider("Top P", value=DEFAULT_TOP_P, min_value=0.0, max_value=1.0)
         frequency_penalty = st.slider(
             "Frequency Penalty",
             value=DEFAULT_FREQUENCY_PENALTY,
-            min_value=-2.0,
+            min_value=0.0,
             max_value=2.0,
         )
         presence_penalty = st.slider(
             "Presence Penalty",
             value=DEFAULT_PRESENCE_PENALTY,
-            min_value=-2.0,
+            min_value=0.0,
             max_value=2.0,
         )
 
