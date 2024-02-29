@@ -19,13 +19,13 @@ Starter kit for prototyping GenAI apps quickly.
     python -m venv venv
     ```
 1. Activate virtual environment 
-    * On Mac machine
+    * On Mac machine or WSL on Windows
     ```
     source venv/bin/activate 
     ```   
-    * On Windows machine
+    * On Windows machine (if not using WSL)
     ```
-    venv\Scripts\activate
+    .\venv\Scripts\activate
     ```
 1. Install packages 
     ```
