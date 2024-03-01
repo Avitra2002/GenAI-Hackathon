@@ -49,7 +49,7 @@ Alternatively, participants can opt not to use the wrapper function and use the 
 
 Question: How do I get started to build a GenAI prototype for the hackathon? Where can I find the genai-starter-kit?
 
-Answer: Git clone from https://bitbucket.org/hackathon-genai/genai-starter-kit and run the sample app. Then you can either modify from that repo or git fork a new one.
+Answer: Git clone from https://bitbucket.org/hackathon-genai/genai-starter-kit and run the sample app. Then you can either modify from that repo or create one from scratch, and git push to your own Project space.
 
 ---
 
