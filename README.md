@@ -14,6 +14,15 @@ Starter kit for prototyping GenAI apps quickly.
     ```
     git clone git@bitbucket.org:hackathon-genai/genai-starter-kit.git 
     ```
+1. Check if you have SSH key added at https://bitbucket.org/account/settings/ssh-keys/ if you are having problem like
+    ```
+    Cloning into 'genai-starter-kit'...
+    git@bitbucket.org: Permission denied (publickey).
+    fatal: Could not read from remote repository.
+
+    Please make sure you have the correct access rights
+    and the repository exists.
+    ```
 1. Create a virtual environment 
     ```
     python -m venv venv
