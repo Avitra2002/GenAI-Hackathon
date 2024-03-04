@@ -1,4 +1,5 @@
 import os
+import pdb
 from typing import Any, Dict, Iterable, List, Optional
 
 from dotenv import load_dotenv
@@ -6,7 +7,13 @@ from loguru import logger
 from openai import AzureOpenAI
 
 from utils.tokens import DEFAULT_MODEL, log_usage
+"""
+import excel2json
+excel2json.convert_from_file('Dataset - Team 13 (upd).xlsx')
+"""
+#print(os.path.exists('../Dataset - Team 13 (upd).xlsx'))
 
+  # Replace with your file path
 DEFAULT_MAX_TOKENS = 1200
 DEFAULT_TEMPERATURE = 0.0
 DEFAULT_TOP_P = 1.0
@@ -17,7 +24,10 @@ DEFAULT_SEED = None
 
 LOG_FILEPATH = "./logs/out.log"
 load_dotenv()
-client = AzureOpenAI()
+try:
+    client = AzureOpenAI()
+except Exception as e:
+    pdb.set_trace()
 
 if os.environ.get("DISABLE_LOG_TO_TERMINAL", "").lower() == "true":
     logger.remove()
@@ -40,6 +50,7 @@ def get_completion(
     presence_penalty: Optional[float] = DEFAULT_PRESENCE_PENALTY,
     seed: Optional[int] = DEFAULT_SEED,
 ):
+    print("get completion start")
     response = client.chat.completions.create(
         model=DEFAULT_MODEL,
         messages=messages,  # type: ignore
@@ -51,6 +62,7 @@ def get_completion(
         seed=seed,
         stream=False,
     )
+    print("getcompletionstart2")
     reply_content = response.choices[0].message.content
     if reply_content:
         log_usage(prompt=messages, completion=reply_content)

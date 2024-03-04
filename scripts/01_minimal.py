@@ -1,5 +1,4 @@
-from utils.llm import get_completion
-
+from utils.llm import get_completion 
 if user_input := input("Question: "):
     messages = [{"role": "user", "content": user_input}]
 

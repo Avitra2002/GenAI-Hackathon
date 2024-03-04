@@ -2,6 +2,9 @@
 gatherUsageStats = false
 
 [theme]
-base = "dark"
-primaryColor = "#00FEFE"
-font = "monospace"
+primaryColor="#1c231a"
+backgroundColor="#04181e"
+secondaryBackgroundColor="#272f23"
+textColor="#f1f5f2"
+font="monospace"
+
