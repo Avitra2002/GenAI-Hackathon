@@ -3,6 +3,9 @@
 # import pandas as pd
 
 import streamlit as st
+if "chatbot_playground_messages" not in st.session_state:
+    st.session_state['chatbot_playground_messages'] = [{"role": "system", "content": "Here are the priority lists:"}]
+
 from langchain_community.document_loaders import (
     Docx2txtLoader,
     PyMuPDFLoader,
@@ -146,6 +149,7 @@ left_col, right_col = st.columns(2)
 if "filtered_guest_list" not in st.session_state:
     st.session_state.filtered_guest_list = pd.DataFrame()
 # Using the left column for the guest list generation
+
 with left_col:
     if "filtered_guest_list" not in st.session_state:
         st.session_state.filtered_guest_list = pd.DataFrame()
@@ -160,32 +164,71 @@ with left_col:
         event_details = {'event_goal': event_goal, 'event_topic': event_topic, 'event_type': event_type}
         ranked_industries, ranked_designations = get_llm_response_and_rank(event_details, industry_keywords, designation_keywords, sys_message)
         num_invites = calculate_invites(event_size, show_up_rate)
+        if "indus" not in st.session_state:
+            st.session_state.indus = []
+
+        if "role" not in st.session_state:
+            st.session_state.role = []
         st.session_state.filtered_guest_list = assign_scores_and_filter(df, ranked_industries, ranked_designations, num_invites)
+        
+        # Filter the guest list based on the rankings and number of invites
+        #filtered_guest_list = assign_scores_and_filter(df, ranked_industries, ranked_designations, num_invites)
+        st.session_state.indus = ranked_industries
+        st.session_state.role = ranked_designations
+    
+    if "chatbot_messages" not in st.session_state:
+        st.session_state.chatbot_messages = []
+    messages = st.session_state.chatbot_playground_messages
+    
+    prompt1 = """Convert the following data delimited by triple ticks to a industry ranked list: ```{data}``` """
+    prompt2 = """Convert the following data delimited by triple ticks to a ranked list with title role ranked list: ```{data}``` """
+    
+    # Modified line with default value for 'indus'
+    industrylist = get_completion([{"role": "system", "content": sys_message}, {"role": "user", "content": prompt1.format(data = st.session_state.get('indus', []))}]).choices[0].message.content
+    rolelist = get_completion([{"role": "system", "content": sys_message}, {"role": "user", "content": prompt2.format(data = st.session_state.get('role', []))}]).choices[0].message.content
+
+    messages.append({"role": "assistant", "content": industrylist})
+    messages.append({"role": "assistant", "content": rolelist})
 
     if st.session_state.filtered_guest_list.empty:
-        st.write("No matching guests found based on the ranking criteria.")
+        st.write("")
     else:
         st.header(f"Tentative Guest List for {num_invites} Invites")
         st.dataframe(st.session_state.filtered_guest_list)
 
+
 # Using the right column for the chatbot
 with right_col:
     st.write("Chat with our assistant")
-    
-    # Initialize chat messages in session state if not already present
+
+    # Initialize chat messages and input counter in session state if not already present
     if "chatbot_playground_messages" not in st.session_state:
         st.session_state.chatbot_playground_messages = [{"role": "system", "content": sys_message}]
-    
+    if "input_counter" not in st.session_state:
+        st.session_state.input_counter = 0
+    messages = st.session_state.get('chatbot_playground_messages', [{"role": "system", "content": sys_message}])
     # Display existing chatbot messages
-    for message in st.session_state.chatbot_playground_messages:
-        st.write(f"{message['role'].title()}: {message['content']}")
+    for message in messages:
+        st.chat_message(message["role"]).write(message["content"])
+
+    # Use a form for the user input and send button
+    with st.form(key='chat_form'):
+        # Text input for user message, with a dynamic key based on the input counter
+        user_input = st.text_input("Type your message here...", key=f"chat_input_{st.session_state.input_counter}")
+
+        # Button to send the message
+        send_button = st.form_submit_button("Send")
     
-    # Text input for user message
-    user_input = st.text_input("Type your message here...", key="chat_input")
+    if send_button and user_input:  # Check if there is any input to send
+        st.chat_message("user").write(user_input)
+        messages.append({"role": "user", "content": user_input})
+
+        stream = CompletionStream(messages)
+        with stream as response:
+            stream.completion = str(st.chat_message("assistant").write_stream(response))
+        messages.append({"role": "assistant", "content": stream.completion})
     
-    # Use a button for submission to avoid the direct modification issue
-    if st.button("Send", key="send_button"):
-        if user_input:  # Check if there is any input to send
-            st.session_state.chatbot_playground_messages.append({"role": "user", "content": user_input})
-            # Clear the input box after submission by resetting the key
-            del st.session_state["chat_input"]
+    if send_button and user_input:  # Check if there is any input to send
+        # Append the message and increment the counter
+        st.session_state.chatbot_playground_messages.append({"role": "user", "content": user_input})
+        st.session_state.input_counter += 1
