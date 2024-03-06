@@ -190,13 +190,31 @@ with left_col:
     messages.append({"role": "assistant", "content": industrylist})
     messages.append({"role": "assistant", "content": rolelist})
 
-    if st.session_state.filtered_guest_list.empty:
-        st.write("")
-    else:
+    if not st.session_state.filtered_guest_list.empty:
         st.header(f"Tentative Guest List for {num_invites} Invites")
         st.dataframe(st.session_state.filtered_guest_list)
 
 
+####### POOLING ########
+    # Desired designation to filter by
+    desired_designation = 'ceo'  # Update this as needed
+    n = 5  # Number of invitees to extract
+
+    # Ensure 'Designation' exists and filter by designation
+    if 'Designation' in st.session_state.filtered_guest_list.columns:
+        st.session_state.filtered_guest_list['Designation'] = st.session_state.filtered_guest_list['Designation'].str.lower()
+        designation_filtered_df = st.session_state.filtered_guest_list[st.session_state.filtered_guest_list['Designation'] == desired_designation.lower()]
+                
+        if not designation_filtered_df.empty:
+            top_n_invitees_df = designation_filtered_df.head(n)
+            st.write(f"Top {n} invitees for the designation '{desired_designation}':")
+            st.dataframe(top_n_invitees_df)
+        else:
+            st.write(f"No invitees found for the designation '{desired_designation}'.")
+    else:
+        st.error("'Designation' column does not exist in the guest list.")
+    
+    
 # Using the right column for the chatbot
 with right_col:
     st.write("Chat with our assistant")
