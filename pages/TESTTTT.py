@@ -194,11 +194,19 @@ if st.button("Final Industry List Generate"):
 
     industryformattedlist = get_completion([{"role": "system", "content": sys_message}, {"role": "user", "content": formatprompt.format(pulled = pulledlist)}]).choices[0].message.content #using gpt to process the string into a python list
     print(industryformattedlist)
+    print(type(industryformattedlist))
     # st.write(industryformattedlist)
     messages.append({"role": "assistant", "content": industryformattedlist})
+    
+    #df = pd.DataFrame(messages)
+    # Convert the DataFrame to a Markdown table
+    #markdown_table = df.to_markdown()
+
+    # Display the Markdown table in Streamlit
+    #st.markdown(markdown_table)
+    
     # st.chat_message("assistant").write(industryformattedlist)
     st.write("Okay! Now we need to confirm the Role list. Please go through the same steps, and clikc the Final Role List Generate button when ready.")
-
     # industryformattedlist 
 
     st.session_state.industry = industryformattedlist
