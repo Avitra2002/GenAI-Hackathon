@@ -5,13 +5,13 @@ import re
 import streamlit as st
 from utils.llm import CompletionStream, get_completion
 
-@st.cache
-def load_data(csv_file_path):
-    return pd.read_csv(csv_file_path)
+# @st.cache
+# def load_data(csv_file_path):
+#     return pd.read_csv(csv_file_path)
 
-# Function to filter guests based on event criteria
-def filter_guests(df, event_size):
-    return df.sample(n=event_size)
+# # Function to filter guests based on event criteria
+# def filter_guests(df, event_size):
+#     return df.sample(n=event_size)
 
 st.title("Guest Lists Generator")
 
@@ -77,6 +77,8 @@ def cluster_and_sort_by_rank(df, ranked_industries, ranked_designations, ranked_
     sorted_df = df.sort_values(by=['OrgTypeRank', 'DesignationRank', 'IndustryRank'])
     return sorted_df.drop(columns=['OrgTypeRank', 'DesignationRank', 'IndustryRank'])
 
+
+
 # Generate initial lists button
 if st.button("Generate Initial Lists"):
     if "indus" not in st.session_state:
@@ -84,11 +86,6 @@ if st.button("Generate Initial Lists"):
 
     if "role" not in st.session_state:
         st.session_state.role = []
-    
-    if "num_invites" in st.session_state:
-        st.header(f"Clustered and Sorted Guest List for {int(st.session_state.num_invites)} people")
-    else:
-        st.header("Clustered and Sorted Guest List")
 
     event_details = {'event_goal': event_goal, 'event_topic': event_topic, 'event_type': event_type}
     ranked_industries, ranked_designations = get_llm_response_and_rank(event_details, industry_keywords, designation_keywords, sys_message)
@@ -141,60 +138,106 @@ if user_input := st.chat_input():
         messages.pop(0)
 
 import ast
-# Layout configuration using columns
-left_col, right_col = st.columns(2)
 
-if "filtered_guest_list" not in st.session_state:
-    st.session_state.filtered_guest_list = pd.DataFrame()
-
-industryformattedlist = []
-roleformattedlist = []
-
-# Using the left column for the indus list generation
-with left_col:
 # Button to generate the industry list
-    if st.button("Final Industry List Generate"):
-        pulledlist = messages[-1]["content"] #pulling the last message from chat session state
-        formatprompt = "From the data delimited in triple ticks below, remove the top row of text that is not part of the list item, and convert the list format into a python list of strings, where each item represents one item in the list. Remove the numbers from each item. ```{pulled}```" 
+if st.button("Final Industry List Generate"):
+    pulledlist = messages[-1]["content"] #pulling the last message from chat session state
+    formatprompt = "From the data delimited in triple ticks below, remove the top row of text that is not part of the list item, and convert the list format into a python list of strings, where each item represents one item in the list. Remove the numbers from each item. ```{pulled}```" 
 
-        industryformattedlist = get_completion([{"role": "system", "content": sys_message}, {"role": "user", "content": formatprompt.format(pulled = pulledlist)}]).choices[0].message.content #using gpt to process the string into a python list
+    industryformattedlist = get_completion([{"role": "system", "content": sys_message}, {"role": "user", "content": formatprompt.format(pulled = pulledlist)}]).choices[0].message.content #using gpt to process the string into a python list
     # st.write(industryformattedlist)
-        messages.append({"role": "assistant", "content": industryformattedlist})
+    messages.append({"role": "assistant", "content": industryformattedlist})
     # st.chat_message("assistant").write(industryformattedlist)
-        st.write("Okay! Now we need to confirm the Role list. Please go through the same steps, and clikc the Final Role List Generate button when ready.")
+    st.write("Okay! Now we need to confirm the Role list. Please go through the same steps, and clikc the Final Role List Generate button when ready.")
 
     # industryformattedlist 
 
-        st.session_state.industry = industryformattedlist
+    st.session_state.industry = industryformattedlist
 
-        prompt2 = """Convert the following data delimited by triple ticks to a ranked list with title role ranked list: ```{data}``` """
+    prompt2 = """Convert the following data delimited by triple ticks to a ranked list with title role ranked list: ```{data}``` """
 
-        rolelist = get_completion([{"role": "system", "content": sys_message}, {"role": "user", "content": prompt2.format(data = st.session_state.role)}]).choices[0].message.content
+    rolelist = get_completion([{"role": "system", "content": sys_message}, {"role": "user", "content": prompt2.format(data = st.session_state.role)}]).choices[0].message.content
 
-        messages.append({"role": "assistant", "content": rolelist})
+    messages.append({"role": "assistant", "content": rolelist})
 
-        st.chat_message("assistant").write(rolelist)
-        
-with right_col:
+    st.chat_message("assistant").write(rolelist)
+
 # Button to generate the Role list
-    if st.button("Final Role List Generate"):
-        pulledlist = messages[-1]["content"] #pulling the last message from chat session state
-        formatprompt = "From the data delimited in triple ticks below, remove the top row of text that is not part of the list item, and convert the list format into a python list of strings, where each item represents one item in the list. Remove the numbers from each item. ```{pulled}```" 
+if st.button("Final Role List Generate"):
+    pulledlist = messages[-1]["content"] #pulling the last message from chat session state
+    formatprompt = "From the data delimited in triple ticks below, remove the top row of text that is not part of the list item, and convert the list format into a python list of strings, where each item represents one item in the list. Remove the numbers from each item. ```{pulled}```" 
 
-        roleformattedlist = get_completion([{"role": "system", "content": sys_message}, {"role": "user", "content": formatprompt.format(pulled = pulledlist)}]).choices[0].message.content #using gpt to process the string into a python list
+    roleformattedlist = get_completion([{"role": "system", "content": sys_message}, {"role": "user", "content": formatprompt.format(pulled = pulledlist)}]).choices[0].message.content #using gpt to process the string into a python list
     # st.write(roleformattedlist)
-        messages.append({"role": "assistant", "content": roleformattedlist})
-        st.chat_message("assistant").write(roleformattedlist)
+    messages.append({"role": "assistant", "content": roleformattedlist})
+    st.chat_message("assistant").write(roleformattedlist)
 
-        roleformattedlist = ast.literal_eval(roleformattedlist)
+    roleformattedlist = ast.literal_eval(roleformattedlist)
     # st.write(st.session_state.industry)
-        industryformattedlist = ast.literal_eval(st.session_state.industry)
-        st.session_state.roleformattedlist = ast.literal_eval(roleformattedlist)  # Convert the string to a list and store in session state
+    industryformattedlist = ast.literal_eval(st.session_state.industry)
 
-        st.write(roleformattedlist)
+    st.write(roleformattedlist)
     
 
         # Cluster and sort the DataFrame based on the potentially updated ranked lists
     clustered_sorted_df = cluster_and_sort_by_rank(df, industryformattedlist, roleformattedlist, st.session_state.ranked_org_types)
     st.header(f"Clustered and Sorted Guest List for {int(st.session_state.num_invites)} people")
     st.dataframe(clustered_sorted_df)
+
+
+    designation_counts = {}
+    for designation in designation_keywords:
+        count = st.number_input(f"Number of invites for {designation}:", min_value=0, value=5, key=f"num_{designation}")
+        designation_counts[designation] = count
+
+    # Step 2: Filter the DataFrame to extract top N invites for each designation
+    designation_dfs = {}  # Dictionary to store DataFrames for each designation
+    for designation, count in designation_counts.items():
+        if count > 0:  # Proceed only if the count is positive
+            filtered_df = clustered_sorted_df[clustered_sorted_df['Designation'].str.contains(designation, case=False, na=False)].head(count)
+            designation_dfs[designation] = filtered_df
+
+    # Displaying the filtered DataFrames for each designation
+    for designation, df in designation_dfs.items():
+        st.subheader(f"Top {designation_counts[designation]} invites for {designation}")
+        st.dataframe(df)
+
+
+        user_preferences = st.text_input("Enter your preferences for the event (e.g., 'We mainly want CEOs and Chairmen to attend'):")
+
+# Step 2: Use LLM to suggest an appropriate number of people for each designation
+    # if user_preferences:
+    #     # Formulate the prompt for the LLM
+    #     prompt = f"Based on the event's goal of '{event_goal}' and the topic of '{event_topic}', and given the preference to mainly have '{user_preferences}', suggest an appropriate number of invites for each designation category that adds up to {int(st.session_state.num_invites)} from the following list: {', '.join(designation_keywords)}."
+        
+    #     # Get LLM's response
+    #     llm_response = get_completion([{"role": "system", "content": sys_message}, {"role": "user", "content": prompt}]).choices[0].message.content
+        
+    #     # Process LLM's response to extract suggested counts (This part may require custom parsing based on your LLM's response format)
+    #     # For demonstration, let's assume the LLM response is in the format: "CEOs: 10, Chairmen: 5, ..."
+    #     suggested_counts = {}  # Dictionary to store suggested counts for each designation
+    #     for part in llm_response.split(','):
+    #         designation, count = part.split(':')
+    #         designation = designation.strip()
+    #         count = int(count.strip())
+    #         suggested_counts[designation] = count
+
+    #     # Display LLM's suggestions
+    #     st.subheader("LLM's Suggestions for Number of Invites:")
+    #     for designation, count in suggested_counts.items():
+    #         st.write(f"{designation}: {count}")
+
+    #     # Step 3: Filter the DataFrame to extract most relevant invites based on LLM's suggestions
+    #     designation_dfs = {}  # Dictionary to store DataFrames for each designation
+    #     for designation, count in suggested_counts.items():
+    #         if count > 0:  # Proceed only if the count is positive
+    #             filtered_df = clustered_sorted_df[clustered_sorted_df['Designation'].str.contains(designation, case=False, na=False)].head(count)
+    #             designation_dfs[designation] = filtered_df
+
+    #     # Displaying the filtered DataFrames for each designation
+    #     for designation, df in designation_dfs.items():
+    #         st.subheader(f"Top {suggested_counts[designation]} invites for {designation}")
+    #         st.dataframe(df)
+    
+
+    
