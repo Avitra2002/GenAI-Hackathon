@@ -21,12 +21,6 @@ df = pd.read_csv(guest_list)
 industry_keywords = df['Industry'].unique().tolist()
 designation_keywords = df['Designation'].unique().tolist()
 
-#initializing session state
-if "ranked_designations" not in st.session_state:
-    st.session_state["ranked_designations"] = []
-if "num_invites" not in st.session_state:
-    st.session_state.num_invites = 0
-    
 # Sidebar inputs for event details
 with st.sidebar:
     sys_message = st.text_area("System message", value="You are a helpful assistant.")
@@ -38,12 +32,6 @@ with st.sidebar:
 
 def calculate_invites(event_size, show_up_rate):
     return int(event_size / (show_up_rate / 100.0))
-
-# Function to parse user preferences and extract designations
-def parse_user_preferences(user_preferences):
-    # Simple example - split by 'and' & ',', and strip whitespace
-    preferences = [pref.strip() for pref in re.split('and|,', user_preferences)]
-    return preferences
 
 def parse_llm_ranking_response(llm_response, keywords):
     # Convert the response and keywords to lowercase for case-insensitive matching
@@ -89,40 +77,7 @@ def cluster_and_sort_by_rank(df, ranked_industries, ranked_designations, ranked_
     sorted_df = df.sort_values(by=['OrgTypeRank', 'DesignationRank', 'IndustryRank'])
     return sorted_df.drop(columns=['OrgTypeRank', 'DesignationRank', 'IndustryRank'])
 
-def allocate_invites(num_invites, top_designations, user_preferred_designations):
-    if not top_designations:
-        return{}
-    
-    st.session_state.num_invites = calculate_invites(event_size, show_up_rate)
-    #ranked_designations = get_llm_response_and_rank(event_details, industry_keywords, designation_keywords, sys_message)
-    total_invites_allocated = 0
-    #hold the number of invites per designation
-    invites_allocation = {}
-    
-    # Base allocation for each of the top designations
-    base_allocation_per_designation = num_invites // len(top_designations)
-    
-    # Additional invites for preferred designations
-    extra_invites = base_allocation_per_designation // 2  # For simplicity, give 50% more invites to preferred designations
-   
-    for designation in top_designations:
-        if designation in user_preferred_designations:
-            # Allocate extra invites to preferred designations
-            invites_allocation[designation] = base_allocation_per_designation + extra_invites
-        else:
-            # Allocate base invites to other designations
-            invites_allocation[designation] = base_allocation_per_designation
-    
-    # Update total invites allocated
-        total_invites_allocated += invites_allocation[designation]
-    
-    # If there are any remaining invites due to rounding, allocate them to the most preferred designation
-    remaining_invites = num_invites - total_invites_allocated
-    if remaining_invites > 0 and user_preferred_designations:
-        most_preferred = user_preferred_designations[0]  # Assuming the first preferred designation is the most preferred
-        invites_allocation[most_preferred] += remaining_invites
-    
-    return invites_allocation
+
 
 # Generate initial lists button
 if st.button("Generate Initial Lists"):
@@ -207,17 +162,8 @@ if st.button("Final Industry List Generate"):
 
     st.chat_message("assistant").write(rolelist)
 
-#user_preferences_input = st.text_input("Enter your preferences for the event (e.g., 'We mainly want CEOs and Chairmen to attend'):")
-user_preferred_designations = []
-top_designations = st.session_state.ranked_designations[:5] 
-invites_allocation = allocate_invites(st.session_state.num_invites, top_designations, user_preferred_designations)
-
 # Button to generate the Role list
 if st.button("Final Role List Generate"):
-    if "user_preferences" in st.session_state:
-        # Parse user preferences to get a list of preferred designations
-        preferred_designations = parse_user_preferences(user_input)
-
     pulledlist = messages[-1]["content"] #pulling the last message from chat session state
     formatprompt = "From the data delimited in triple ticks below, remove the top row of text that is not part of the list item, and convert the list format into a python list of strings, where each item represents one item in the list. Remove the numbers from each item. ```{pulled}```" 
 
@@ -232,18 +178,11 @@ if st.button("Final Role List Generate"):
 
     st.write(roleformattedlist)
     
-    # Invoking the 'allocate_invites' function with the necessary parameters
-    invites_allocation = allocate_invites(st.session_state.num_invites, roleformattedlist[:5], user_preferred_designations)
 
-    # Iterate over the allocations to display the final role list with allocated invites
-    for designation, num_invites in invites_allocation.items():
-        filtered_df = df[df['Designation'].str.contains(designation, case=False)].head(num_invites)
-        st.write(f"Top invites for {designation}:")
-        st.dataframe(filtered_df)
         # Cluster and sort the DataFrame based on the potentially updated ranked lists
-#    clustered_sorted_df = cluster_and_sort_by_rank(df, industryformattedlist, roleformattedlist, st.session_state.ranked_org_types)
-#    st.header(f"Clustered and Sorted Guest List for {int(st.session_state.num_invites)} people")
-#    st.dataframe(clustered_sorted_df)
+    clustered_sorted_df = cluster_and_sort_by_rank(df, industryformattedlist, roleformattedlist, st.session_state.ranked_org_types)
+    st.header(f"Clustered and Sorted Guest List for {int(st.session_state.num_invites)} people")
+    st.dataframe(clustered_sorted_df)
 
 
     # designation_counts = {}

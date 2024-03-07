@@ -1,11 +1,14 @@
 # based on https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps
 import streamlit as st
-from scripts.testdata import outputjson
+from scripts.kydata import outputjson
 from utils.llm import CompletionStream
 
 jsoninput = outputjson()
 
-st.title("Chatbot")
+st.title("Deconflicting Chatbot")
+st.write("Hello friend! I have processed your confirmed participants, and am happy to help you ensure that there are no conflicts within tables.")
+st.write("Tell me your postulated tables, and I will help you ensure your participants remain happy!")
+
 
 context = "You are an AI chatbot for an event planning team. Your role is to help them determine who to seat at which tables, based on user input and data. You will use the data delimited by triple ticks as your database from which to decide table seatings. Do not add your own input into the data. Make sure to check the remarks for each decision. Individual remarked to have a spouse must seat at the same table as their spouse. Individuals remarked to be based overseas / virtual invite only cannot be sat at a table. If there are any issues, make that clear to the user. ```{tables}```"
 
@@ -33,7 +36,7 @@ messages[0] = {"role": "system", "content": context}
 
 
 
-for message in messages:
+for message in messages[1:]:
     st.chat_message(message["role"]).write(message["content"])
 
 if user_input := st.chat_input():
