@@ -19,4 +19,3 @@ print(data[0])
 
 # Print the value of a specific column in the first item
 print(data[0]['Industry'])
-
