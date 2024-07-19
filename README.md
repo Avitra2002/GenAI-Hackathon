@@ -8,5 +8,6 @@ Temasek X SUTD GenAI Hackathon
 
 
 - View our product slides [here](https://github.com/ilenhanako/genai_hackathon_24/files/15311732/GenAI.Hackathon.team.13.1.pptx)
-[13 - Avitra Phon.pdf](https://github.com/user-attachments/files/16301245/13.-.Avitra.Phon.pdf)
+![13 - Avitra Phon-1](https://github.com/user-attachments/assets/4057657e-51c6-4919-9880-aa103761c1e8)
+
 
